@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const port = 3000
 
+app.use(express.json())
+
 // databasa :)
 let database = [
     {
@@ -166,6 +168,7 @@ let database = [
     },
 ]
 
+// /users
 app.get('/users', (req, res) => {
     let user = database.map((item) => {
         return {
@@ -179,27 +182,99 @@ app.get('/users', (req, res) => {
     res.send(user)
 })
 
+
+// /users/2
 app.get('/users/:userid', (req, res) => {
-    res.send({
-        userid: database[req.params.userid - 1].userid,
-        name: database[req.params.userid - 1].name,
-        email: database[req.params.userid - 1].email,
-        posts: database[req.params.userid - 1].posts.length
-    })
+
+    let user = database.find(item => item.userid == req.params.userid)
+
+    if (user) {
+        user = {
+            "error": false,
+            "userid": user.userid,
+            "name": user.name,
+            "email": user.email,
+            "posts": user.posts.length
+        }
+    } else {
+        user = {
+            "error": true,
+            "message": "Belirtilen id için herhangi bir kullanıcı bulunamadı"
+        }
+    }
+
+    res.send(user)
 })
 
+// /users/2/posts
 app.get('/users/:userid/posts', (req, res) => {
-    res.send(database[req.params.userid - 1]["posts"])
+    
+    let user = database.find(item => item.userid == req.params.userid)
+
+    res.send(user["posts"])
+})
+
+// /users/2/posts/5
+
+app.get('/users/:userid/posts/:postid', (req, res) => {
+    // tüm postlar
+    let posts = database[req.params.userid - 1]["posts"];
+
+    let thePost = { "error": true };
+
+    posts.forEach(post => {
+        if (post["postid"] == req.params.postid) {
+            thePost = post;
+        }
+    });
+
+    res.send(thePost)
 })
 
 app.post('/users', (req, res) => {
-    res.send('post Dünya!')
+    let lastUser = database[database.length - 1];
+
+    let userid = lastUser.userid + 1;    // en son kayıtlı userid +1
+
+    let name = req.body.name;      // kullanıcıdan alacak
+    let email = req.body.email;     // kullanıcıdan alacak    
+
+    let user = {
+        "userid": userid,
+        "name": name,
+        "email": email,
+        "posts": [],
+    };
+
+    // user database en son eleman olarak ekle.
+    database.push(user);
+
+    res.send(user)
 })
 
 app.delete('/users/:userid', (req, res) => {
-    delete database[req.params.userid - 1]
 
-    res.send("silindi")
+    // let user = database.find(item => item.userid == req.params.userid)
+    let user = {};
+
+    // burada index kullanmanın zararı ne olabilir?
+    if (database[req.params.userid - 1]) {
+        user = {
+            "error": false,
+            "userid": database[req.params.userid - 1].userid,
+            "name": database[req.params.userid - 1].name,
+            "email": database[req.params.userid - 1].email
+        }
+
+        database.splice(req.params.userid - 1, 1)
+    } else {
+        user = {
+            "error": true,
+            "message": "Belirtilen id için herhangi bir kullanıcı bulunamadı"
+        }
+    }
+
+    res.send(user)
 })
 
 app.put('/users/:userid', (req, res) => {
