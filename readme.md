@@ -25,3 +25,8 @@ GET: `localhost:3000/users/2/posts` id'si 2 oln kullanıcının tüm post'ların
 
 GET: `localhost:3000/users/2/posts/5/` id'si 2 olan kullanıcının id'si 5 olan post'unu gösterir.
 
+POST: `localhost:3000/users` application/json `{"username": "orhan", "email": "orhan@orhan.co"}` yeni bir kullanıcı ekler
+
+PUT: `localhost:3000/users/2` id'si 2 olan kullanıcıyı günceller.
+
+REMOVE: `localhost:3000/users/2` id'si 2 olan kullanıcıyı siler.
