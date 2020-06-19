@@ -7,7 +7,7 @@ app.use(express.json())
 // databasa :)
 let database = [
     {
-        userid: 1,
+        userid: 15,
         name: "orhan",
         email: "orhan@orhan.co",
         posts: [
@@ -39,7 +39,7 @@ let database = [
         ]
     },
     {
-        userid: 2,
+        userid: 22,
         name: "adem",
         email: "adem@adem.co",
         posts: [
@@ -71,7 +71,7 @@ let database = [
         ]
     },
     {
-        userid: 3,
+        userid: 34,
         name: "ismail",
         email: "ismail@ismail.co",
         posts: [
@@ -103,7 +103,7 @@ let database = [
         ]
     },
     {
-        userid: 4,
+        userid: 40,
         name: "elif",
         email: "elif@elif.co",
         posts: [
@@ -135,7 +135,7 @@ let database = [
         ]
     },
     {
-        userid: 5,
+        userid: 42,
         name: "gamze",
         email: "gamze@gamze.co",
         posts: [
@@ -254,16 +254,14 @@ app.post('/users', (req, res) => {
 
 app.delete('/users/:userid', (req, res) => {
 
-    // let user = database.find(item => item.userid == req.params.userid)
-    let user = {};
+    let user = database.find(item => item.userid == req.params.userid)
 
-    // burada index kullanmanın zararı ne olabilir?
-    if (database[req.params.userid - 1]) {
+    if (user) {
         user = {
             "error": false,
             "userid": database[req.params.userid - 1].userid,
             "name": database[req.params.userid - 1].name,
-            "email": database[req.params.userid - 1].email
+            "email": database[req.params.userid - 1].email,
         }
 
         database.splice(req.params.userid - 1, 1)
