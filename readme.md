@@ -1,6 +1,6 @@
 # TestFull
 
-Kendi içerisinde database olan basit bir RestFull API
+Kendi içerisindeki veritabanı dizi olan basit bir RestFull API
 
 ## Installation
 
