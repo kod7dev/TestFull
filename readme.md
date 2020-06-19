@@ -9,7 +9,7 @@ Kendi içerisinde database olan basit bir RestFull API
 ```
 cd TestFull   // İndirilen klasöre girilir
 
-npm install   // node_modules paketleri kurar
+npm install   // node_modules paketlerini kurar
 
 node index.js // programı çalıştırır
 ```
