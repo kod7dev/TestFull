@@ -4,7 +4,7 @@ const port = 3000
 
 app.use(express.json())
 
-// databasa :)
+// databasa
 let database = [
     {
         userid: 15,
@@ -168,14 +168,13 @@ let database = [
     },
 ]
 
-// /users
 app.get('/users', (req, res) => {
     let user = database.map((item) => {
         return {
             userid: item.userid,
             name: item.name,
             email: item.email,
-            posts: item.posts.length
+            posts: item.posts
         }
     })
 
@@ -183,7 +182,6 @@ app.get('/users', (req, res) => {
 })
 
 
-// /users/2
 app.get('/users/:userid', (req, res) => {
 
     let user = database.find(item => item.userid == req.params.userid)
@@ -194,7 +192,7 @@ app.get('/users/:userid', (req, res) => {
             "userid": user.userid,
             "name": user.name,
             "email": user.email,
-            "posts": user.posts.length
+            "posts": user.posts
         }
     } else {
         user = {
@@ -206,15 +204,14 @@ app.get('/users/:userid', (req, res) => {
     res.send(user)
 })
 
-// /users/2/posts
+
 app.get('/users/:userid/posts', (req, res) => {
-    
+
     let user = database.find(item => item.userid == req.params.userid)
 
     res.send(user["posts"])
-})
+});
 
-// /users/2/posts/5
 
 app.get('/users/:userid/posts/:postid', (req, res) => {
     // tüm postlar
@@ -230,6 +227,7 @@ app.get('/users/:userid/posts/:postid', (req, res) => {
 
     res.send(thePost)
 })
+
 
 app.post('/users', (req, res) => {
     let lastUser = database[database.length - 1];
@@ -252,37 +250,35 @@ app.post('/users', (req, res) => {
     res.send(user)
 })
 
+
 app.delete('/users/:userid', (req, res) => {
 
-    let user = database.find(item => item.userid == req.params.userid)
+    let i = database.findIndex(item => item.userid == req.params.userid);
 
-    if (user) {
-        user = {
-            "error": false,
-            "userid": database[req.params.userid - 1].userid,
-            "name": database[req.params.userid - 1].name,
-            "email": database[req.params.userid - 1].email,
-        }
-
-        database.splice(req.params.userid - 1, 1)
+    if (i >= 0) {
+        database.splice(i, 1);
+        res.send({"delete": true})
     } else {
-        user = {
-            "error": true,
-            "message": "Belirtilen id için herhangi bir kullanıcı bulunamadı"
-        }
+        res.send({ "error": true, "message": "Belirtilen id'de değer yok" })
     }
-
-    res.send(user)
 })
+
 
 app.put('/users/:userid', (req, res) => {
 
-    userid = req.params.userid
+    let i = database.findIndex(item => item.userid == req.params.userid);
 
-    database[userid - 1].name = "";
-    database[userid - 1].email = "";
+    if (i >= 0) {
 
-    res.send(database[userid - 1])
+        if (req.body.name) database[i].name = req.body.name;
+
+        if (req.body.email) database[i].email = req.body.email;
+
+        res.send(database[i])
+    } else {
+        res.send({ "error": true, "message": "Belirtilen id'de değer yok" })
+    }
+
 })
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
