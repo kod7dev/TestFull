@@ -169,63 +169,66 @@ let database = [
 ]
 
 app.get('/users', (req, res) => {
-    let user = database.map((item) => {
-        return {
-            userid: item.userid,
-            name: item.name,
-            email: item.email,
-            posts: item.posts
-        }
-    })
+    console.log("GET: /users");
 
-    res.send(user)
+    console.log(database);    
+    res.send(database)
 })
 
 
 app.get('/users/:userid', (req, res) => {
+    console.log("GET: /users/");
 
-    let user = database.find(item => item.userid == req.params.userid)
+    let result = {};
+    let userIndex = database.findIndex(item => item.userid == req.params.userid);
 
-    if (user) {
-        user = {
-            "error": false,
-            "userid": user.userid,
-            "name": user.name,
-            "email": user.email,
-            "posts": user.posts
-        }
+    if (userIndex >= 0) {
+        result = database[userIndex];
     } else {
-        user = {
-            "error": true,
-            "message": "Belirtilen id için herhangi bir kullanıcı bulunamadı"
-        }
+        result = { "error": true, "msg": "Belirtilen id de user bulunamadı" }
     }
 
-    res.send(user)
+    console.log(result);    
+    res.send(result)
 })
 
 
 app.get('/users/:userid/posts', (req, res) => {
+    console.log("GET: /users/" + req.params.userid + "/posts/");
 
-    let user = database.find(item => item.userid == req.params.userid)
+    let result = {};
+    let userIndex = database.findIndex(item => item.userid == req.params.userid);
 
-    res.send(user["posts"])
+    if (userIndex >= 0) {
+        result = database[userIndex].posts;
+    } else {
+        result = { "error": true, "msg": "Belirtilen id de user bulunamadı" }
+    }
+
+    console.log(result);    
+    res.send(result)
 });
 
 
 app.get('/users/:userid/posts/:postid', (req, res) => {
-    // tüm postlar
-    let posts = database[req.params.userid - 1]["posts"];
+    console.log("GET: /users/" + req.params.userid + "/posts/" + req.params.postid);
 
-    let thePost = { "error": true };
+    let result = {};
+    let userIndex = database.findIndex(item => item.userid == req.params.userid);
 
-    posts.forEach(post => {
-        if (post["postid"] == req.params.postid) {
-            thePost = post;
+    if (userIndex >= 0) {
+        let postIndex = database[userIndex].posts.findIndex(item => item.postid == req.params.postid)
+        if (postIndex >= 0) {
+            result = database[userIndex].posts[postIndex]
+        } else {
+            result = { "error": true, "msg": "Belirtilen id de post bulunamadı" }
         }
-    });
+    } else {
+        result = { "error": true, "msg": "Belirtilen id de user bulunamadı" }
+    }
 
-    res.send(thePost)
+    console.log(result);    
+    res.send(result)
 })
 
 
@@ -257,7 +260,7 @@ app.delete('/users/:userid', (req, res) => {
 
     if (i >= 0) {
         database.splice(i, 1);
-        res.send({"delete": true})
+        res.send({ "delete": true })
     } else {
         res.send({ "error": true, "message": "Belirtilen id'de değer yok" })
     }
@@ -282,3 +285,5 @@ app.put('/users/:userid', (req, res) => {
 })
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+
+console.log(616161);
